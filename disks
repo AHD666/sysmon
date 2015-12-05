@@ -1,0 +1,11 @@
+#!/bin/bash
+DISKS="sda1 sda3 md0 md127"
+echo 'Filesystem      Size  Used Avail Use% Mounted on'
+
+for disk in $DISKS
+do
+	df -h /dev/$disk | grep dev
+done
+echo
+awk '/^md/ {printf "%s: ", $1}; /blocks/ {print $NF}' < /proc/mdstat
+echo

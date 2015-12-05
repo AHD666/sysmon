@@ -1,0 +1,16 @@
+#!/bin/bash
+BIN="/root/bin"
+CHECKS="systemtempalert hddtempsalert disksalert raidalert"
+EMAILS="anoterone@no.one xxxx@somewhere.com"
+TMPFILE="/tmp/systemcheckalert"
+TEXT="ALERT! LIMIT REACHED / "
+SUBJECT=$TEXT$(date +%Y-%m-%d--%R)
+
+for syscheck in $CHECKS
+do
+	for mail in $EMAILS
+	do
+		$BIN/$syscheck $mail "$SUBJECT" $TMPFILE
+	done
+done
+

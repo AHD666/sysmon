@@ -1,0 +1,21 @@
+#!/bin/bash
+HDDS="/dev/sdb /dev/sdc /dev/sdd /dev/sde"
+HDT=/usr/sbin/hddtemp
+LOG=/usr/bin/logger
+DOWN=/sbin/shutdown
+ALERT_LEVEL=50
+echo HDD temperatures
+for disk in $HDDS
+do
+  if [ -b $disk ]; then
+	HDTEMP=$($HDT $disk | awk '{ print $4}' | awk -F '°' '{ print $1}')
+        if [ $HDTEMP -ge $ALERT_LEVEL ]; then
+           $LOG "System going down as hard disk : $disk temperature $HDTEMP°C reached its limit"
+           sync;sync
+           $DOWN -h 0
+        else
+			echo $disk @ $HDTEMP °C
+        fi
+  fi
+done
+echo

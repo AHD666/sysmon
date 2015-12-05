@@ -1,0 +1,20 @@
+#!/bin/bash
+BIN="/root/bin"
+CHECKS="hddtemps systemtemp disks kernel"
+EMAILS="xxxxxxx@gmail.com xxxxxx@xxxxx.com"
+TMPFILE="/tmp/systemcheck"
+TEXT="Daily System Check / "
+SUBJECT=$TEXT$(date +%Y-%m-%d--%R)
+
+echo 'Daily system check ' > $TMPFILE
+echo >> $TMPFILE
+
+for syscheck in $CHECKS
+do
+	$BIN/$syscheck >> $TMPFILE
+done
+
+for mail in $EMAILS
+do
+	cat $TMPFILE  | mail -s "$SUBJECT" $mail
+done

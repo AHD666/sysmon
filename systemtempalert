@@ -1,0 +1,32 @@
+#!/bin/bash
+MAIL=$1
+SUBJECT=$2
+TMPFILE=$3
+CHIPS="radeon-pci-0008 k10temp-pci-00c3 "
+SENS=/usr/sbin/sensors
+LOG=/usr/bin/logger
+DOWN=/sbin/shutdown
+ALERT_LEVEL=90
+TRIGGER="0"
+TRIG="1"
+TOP="top -b -n 1 -o %CPU | head -n 15"
+echo > $TMPFILE
+
+for chip in $CHIPS
+do
+	CHIPTEMP=$($SENS -A $chip | awk '{ print $2}' | awk -F '+|°|=' '{ print $2}'| cut -b -2) 
+        if [ $CHIPTEMP -ge $ALERT_LEVEL ]; then
+            echo ALERT! $chip @ $CHIPTEMP °C '('limit: $ALERT_LEVEL °C')' >> $TMPFILE
+            echo >> $TMPFILE
+            TRIGGER="1"
+        fi
+done
+
+if [ "$TRIGGER" == "$TRIG" ]; then 
+	echo >> %TMPFILE
+	top -b -n 1 -o %CPU | head -n 20 | egrep -v "Cpu|top|Tasks|GiB" | awk '{ print $11 ": " $9}' >> $TMPFILE
+	echo >> %TMPFILE
+	echo >> %TMPFILE	
+	top -b -n 1 -o TIME | head -n 20 | egrep -v "Cpu|top|Tasks|GiB" | awk '{ print $11 ": " $7}' >> $TMPFILE
+	cat $TMPFILE | mail -s "$SUBJECT" $MAIL
+fi

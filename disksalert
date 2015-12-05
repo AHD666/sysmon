@@ -1,0 +1,25 @@
+#!/bin/bash
+MAIL=$1
+SUBJECT=$2
+TMPFILE=$3
+DISKS="/dev/sda1 /dev/sda3 /dev/md0 /dev/md127"
+DFDISK="/usr/bin/df"
+ALERT_LEVEL=75
+TRIGGER=0
+TRIG=1
+TEXT="ALERT! Low disk space / "
+SUBJECT=$TEXT$(date +%Y-%m-%d--%R)
+
+echo > $TMPFILE
+
+for disk in $DISKS
+do
+	SPACE=$($DFDISK $disk | grep -v Filesystem | awk -F ' ' '{ print $5}' | awk -F '%' '{ print $1}')
+	if [ $SPACE -ge $ALERT_LEVEL ]; then
+		echo ALERT! $disk @ $SPACE % limit: $ALERT_LEVEL >> $TMPFILE
+		TRIGGER=1
+	fi
+done
+if [ "$TRIGGER" == "$TRIG" ]; then 
+	cat $TMPFILE | mail -s "$SUBJECT" $MAIL
+fi

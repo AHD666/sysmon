@@ -1,0 +1,35 @@
+#!/bin/bash
+MAIL=$1
+SUBJECT=$2
+TMPFILE=$3
+HDDS="/dev/sdb /dev/sdc /dev/sdd /dev/sde"
+HDT=/usr/sbin/hddtemp
+LOG=/usr/bin/logger
+DOWN=/sbin/shutdown
+ALERT_LEVEL=50
+TRIGGER="0"
+TRIG="1"
+
+echo > $TMPFILE
+
+for disk in $HDDS
+do
+  if [ -b $disk ]; then
+	HDTEMP=$($HDT $disk | awk '{ print $4}' | awk -F '°' '{ print $1}')
+        if [ $HDTEMP -ge $ALERT_LEVEL ]; then
+           echo ALERT! $disk @ $HDTEMP °C limit: $ALERT_LEVEL >> $TMPFILE
+           TRIGGER="1"
+        fi
+  fi
+done
+
+if [ "$TRIGGER" == "$TRIG" ]; then 
+	cat $TMPFILE | mail -s "$SUBJECT" $MAIL
+fi
+
+if [ "$TRIGGER" != "$TRIG" ]; then 
+		sleep 1
+	else
+		cat $TMPFILE | mail -s "$SUBJECT" $MAIL
+fi
+

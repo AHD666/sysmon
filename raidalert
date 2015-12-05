@@ -1,0 +1,27 @@
+#!/bin/bash
+MAIL=$1
+SUBJECT="RAID ARRAY PANIC!!!"
+TMPFILE=$3
+ARRAYS="md0 md127"
+CAT="/usr/bin/cat"
+ALERT_LEVEL=5
+TRIGGER=0
+TRIG=1
+GOOD="[UU]"
+echo > $TMPFILE
+
+for array in $ARRAYS
+do
+	STATUS=$($CAT '/proc/mdstat' | awk '/^md/ {printf "%s: ", $1}; /blocks/ {print $NF}' | grep $array | awk '{print $2}')
+	if [ $STATUS != $GOOD ]; then
+		echo $array: $STATUS >> $TMPFILE
+		echo >> $TMPFILE
+		TRIGGER=1
+	fi
+done
+
+if [ "$TRIGGER" == "$TRIG" ]; then 
+	cat /proc/mdstat >> $TMPFILE
+	cat $TMPFILE | mail -s "$SUBJECT" $MAIL
+fi
+

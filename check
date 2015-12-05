@@ -1,0 +1,11 @@
+#!/bin/bash
+BIN="/root/bin"
+CHECKS="hddtemps systemtemp disks kernel"
+EMAILS="xxxxx@xxxx.com xxxx@xxxxx"
+TMPFILE="/tmp/systemcheck"
+DATE="/usr/bin/date"
+TEXT="Daily System Check - "
+
+SUBJECT=$TEXT$(date +%Y-%m-%d--%A)
+
+echo $SUBJECT

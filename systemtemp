@@ -1,0 +1,21 @@
+#!/bin/bash
+CHIPS="k10temp-pci-00c3 radeon-pci-0008"
+SENS=/usr/sbin/sensors
+LOG=/usr/bin/logger
+DOWN=/sbin/shutdown
+ALERT_LEVEL=70
+echo System temeratures
+for chip in $CHIPS
+do
+	CHIPTEMP=$($SENS -A $chip | awk '{ print $2}' | awk -F '+|°|=' '{ print $2}'| cut -b -2) 
+        if [ $CHIPTEMP -ge $ALERT_LEVEL ]; then
+            echo ALERT! $chip @ $CHIPTEMP °C above $ALERT_LEVEL °C
+                    # 	$LOG "System going down as hard disk : $disk temperature $HDTEMP°C crossed its limit"
+        #   sync;sync
+        #   $DOWN -h 0
+        else
+		
+			echo $chip @ $CHIPTEMP °C
+        fi
+done
+echo

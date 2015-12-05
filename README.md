@@ -5,6 +5,7 @@ systemcheck (daily)
 		systemtemp
 		disks
 		kernel
+		
 	sends mail with summary
 
 
@@ -14,4 +15,5 @@ systemcheckalert (each minute)
 		hddtempsalert
 		disksalert
 		raidalert
+		
 	sends email if triggered (beware! spams!)

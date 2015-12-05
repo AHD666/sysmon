@@ -1,19 +1,17 @@
-# sysmon
+# sysmon, monitor several values and send an email if triggered
 systemcheck (daily)
 	starts
 		hddtemps
 		systemtemp
 		disks
 		kernel
+	sends mail with summary
 
 
 systemcheckalert (each minute)
 	starts
-		systemtempalert ĉhecks temp on sensors in CHIPS, checks if
+		systemtempalert
 		hddtempsalert
 		disksalert
 		raidalert
-
-
-
-# sysmon
+	sends email if triggered (beware! spams!)

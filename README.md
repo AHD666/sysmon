@@ -17,3 +17,5 @@ systemcheckalert (each minute)
 		raidalert
 		
 	sends email if triggered (beware! spams!)
+	
+first shell scripting attempt. kinda embarrasing. left here for 'historic' reasons :P
